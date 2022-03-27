@@ -17,9 +17,6 @@ class APIService {
     
     // Function requaired to fetch data from API
     func fetchData() {
-        
-        print("FETCHING!")
-        
         guard let url  = URL(string: "https://api.coinlore.net/api/tickers/") else {
             print("CANNOT CRATE URL - it empty ")
             return

@@ -18,7 +18,7 @@ struct Info: Decodable {
 }
 
 struct Coin: Decodable {
-    var id: Int
+    var id: String
     var symbol: String
     var name: String
     var nameid: String
