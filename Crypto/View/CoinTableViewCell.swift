@@ -11,6 +11,9 @@ class CoinTableViewCell: UITableViewCell {
     public static let identifier = "CoinTableViewCell"
     private let coinImage = UIImageView()
     private let coinNameLabel = UILabel()
+    private let coinPriceLabel = UILabel()
+    private let namePriceStackView = UIStackView()
+    
     private var coin: Coin?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -27,9 +30,12 @@ class CoinTableViewCell: UITableViewCell {
     private func setUp() {
         contentView.addSubview(coinImage)
         contentView.addSubview(coinNameLabel)
+        contentView.addSubview(namePriceStackView)
         
         setUpCoinImage()
         setUpCoinNameLabel()
+        setUpCoinPriceLabel()
+        setUpNamePriceStackView()
     }
 
     private func setUpCoinImage() {
@@ -45,10 +51,27 @@ class CoinTableViewCell: UITableViewCell {
         coinNameLabel.text = "Coin"
     }
     
+    private func setUpCoinPriceLabel() {
+        coinPriceLabel.translatesAutoresizingMaskIntoConstraints = false
+        coinPriceLabel.text = "USD"
+    }
+    
+    private func setUpNamePriceStackView() {
+        namePriceStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        namePriceStackView.addArrangedSubview(coinNameLabel)
+        namePriceStackView.addArrangedSubview(coinPriceLabel)
+        
+        namePriceStackView.axis = NSLayoutConstraint.Axis.vertical
+        namePriceStackView.distribution = UIStackView.Distribution.equalSpacing
+        namePriceStackView.alignment = UIStackView.Alignment.leading
+        namePriceStackView.spacing = 6
+    }
+    
     func addConstraints() {
         var constraints = [NSLayoutConstraint]()
         constraints += createCoinImageConstraints()
-        constraints += createCoinNameLabelConstraints()
+        constraints += createNamePriceStackView()
         NSLayoutConstraint.activate(constraints)
     }
     
@@ -62,11 +85,12 @@ class CoinTableViewCell: UITableViewCell {
         ]
     }
     
-    private func createCoinNameLabelConstraints() -> [NSLayoutConstraint] {
+    private func createNamePriceStackView() -> [NSLayoutConstraint] {
         return [
 //            coinNameLabel.leadingAnchor.constraint(equalTo: coinImage.trailingAnchor, constant: -20),
-            coinNameLabel.leadingAnchor.constraint(equalTo: coinImage.trailingAnchor, constant: 20),
-            coinNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            namePriceStackView.leadingAnchor.constraint(equalTo: coinImage.trailingAnchor, constant: 20),
+            namePriceStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+
         ]
     }
     
@@ -74,7 +98,7 @@ class CoinTableViewCell: UITableViewCell {
         self.coin = configureCoin
         if let coin = coin {
             coinNameLabel.text = coin.name
-            
+            coinPriceLabel.text = "\(coin.price_usd) $"
             if let coinImg =  UIImage(named: coin.symbol.lowercased()){
                 coinImage.image = coinImg
             }
