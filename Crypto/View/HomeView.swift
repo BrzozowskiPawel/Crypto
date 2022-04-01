@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
+class HomeView: UIView {
 
     private let rainbowView = UIView()
     private let rainbowViewStackView = UIStackView()
@@ -111,6 +111,17 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         ]
     }
     
+    public func configureTodayLabel(dayOfWeek dayOfWeek: String, dayOfMonth dayOfMonth: Int?, month month:String, year year: String) {
+        guard let dayOfMonth = dayOfMonth else {
+            return
+        }
+
+        dateLabel.text = "\(dayOfWeek) \(dayOfMonth)"
+        monthYearLabel.text = "\(month) \(year)"
+    }
+}
+
+extension HomeView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Num: \(indexPath.row)")
         print("Value: \(coinArray[indexPath.row])")
@@ -133,5 +144,4 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         myTableView.reloadData()
         print("RELOADING SHOULD APEAR = \(coins.count)")
     }
-
 }
