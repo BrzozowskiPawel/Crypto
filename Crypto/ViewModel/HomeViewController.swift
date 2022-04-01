@@ -10,7 +10,7 @@ import UIKit
 class HomeViewController: UIViewController {
 
     private let APIservice = APIService()
-    private var coinArray = [Coin]()
+    private var homeView = HomeView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,15 +23,14 @@ class HomeViewController: UIViewController {
     override func loadView() {
         super.loadView()
         print("Load View")
-        view = HomeView()
+        view = homeView
     }
 
 }
 
 extension HomeViewController: APIProtocol {
     func dataRetrieved(_ retrievedData: APIResponse) {
-        self.coinArray = retrievedData.data
-        print("Count: \(self.coinArray.count)")
+        homeView.configureTableView(coins: retrievedData.data)
     }
     
     

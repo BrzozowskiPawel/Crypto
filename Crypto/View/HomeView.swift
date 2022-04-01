@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
+class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
 
     private let rainbowView = UIView()
     private let rainbowViewStackView = UIStackView()
@@ -15,14 +15,13 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
     private let dateLabel = UILabel()
     private let monthYearLabel = UILabel()
 
-    private let myTableView = UITableView()
-    private let myArray: NSArray = ["First","Second","Third"]
+    private var myTableView = UITableView()
+    private var coinArray = [Coin]()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         configureElements()
-        
         addConstraints()
         
         backgroundColor = .white
@@ -43,7 +42,7 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
         
         addSubview(myTableView)
         myTableView.translatesAutoresizingMaskIntoConstraints = false
-        myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
+        myTableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
         myTableView.dataSource = self
         myTableView.delegate = self
     }
@@ -60,21 +59,6 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
         monthYearLabel.translatesAutoresizingMaskIntoConstraints = false
         monthYearLabel.textAlignment = .center
         monthYearLabel.text = "march 2022"
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Num: \(indexPath.row)")
-        print("Value: \(myArray[indexPath.row])")
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return myArray.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
-        cell.textLabel!.text = "\(myArray[indexPath.row])"
-        return cell
     }
     
     private func addElementsToStackView() {
@@ -125,6 +109,29 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
             myTableView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
             
         ]
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Num: \(indexPath.row)")
+        print("Value: \(coinArray[indexPath.row])")
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return coinArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CoinTableViewCell.identifier, for: indexPath as IndexPath) as! CoinTableViewCell
+        
+        cell.configureCell(withCell: coinArray[indexPath.row])
+        
+        return cell
+    }
+    
+    public func configureTableView(coins: [Coin]) {
+        self.coinArray = coins
+        myTableView.reloadData()
+        print("RELOADING SHOULD APEAR = \(coins.count)")
     }
 
 }
