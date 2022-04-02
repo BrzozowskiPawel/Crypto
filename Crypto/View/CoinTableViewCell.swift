@@ -16,6 +16,8 @@ class CoinTableViewCell: UITableViewCell {
     private let coinPriceChangeStackView = UIStackView()
     private let coin24hChangeLabel = UILabel()
     private let coin7dChangeLabel = UILabel()
+    private let coin24hChangeStackView = UIStackView()
+    private let coin7dChangeStackView = UIStackView()
     
     private var coin: Coin?
     
@@ -39,9 +41,12 @@ class CoinTableViewCell: UITableViewCell {
         setUpCoinNameLabel()
         setUpCoinPriceLabel()
         setUpNamePriceStackView()
-        setUpcoinPriceChangeStackViewStackView()
         setUp24hPriceChangePriceLabel()
         setUp7dPriceChangePriceLabel()
+        
+        setUpCoin24hChangeStackVieww()
+        setUpCoin7dChangeStackView()
+        setUpcoinPriceChangeStackView()
     }
 
     private func setUpCoinImage() {
@@ -55,6 +60,7 @@ class CoinTableViewCell: UITableViewCell {
     private func setUpCoinNameLabel() {
         coinNameLabel.translatesAutoresizingMaskIntoConstraints = false
         coinNameLabel.text = "Coin"
+        coinNameLabel.font = UIFont.boldSystemFont(ofSize: 19)
     }
     
     private func setUpCoinPriceLabel() {
@@ -64,13 +70,13 @@ class CoinTableViewCell: UITableViewCell {
     
     private func setUp24hPriceChangePriceLabel() {
         coin24hChangeLabel.translatesAutoresizingMaskIntoConstraints = false
-        coin24hChangeLabel.text = "+20 24H"
+        coin24hChangeLabel.text = "+20"
         coin24hChangeLabel.textAlignment = .right
     }
     
     private func setUp7dPriceChangePriceLabel() {
         coin7dChangeLabel.translatesAutoresizingMaskIntoConstraints = false
-        coin7dChangeLabel.text = "-10 7d"
+        coin7dChangeLabel.text = "-20"
         coin7dChangeLabel.textAlignment = .right
     }
     
@@ -83,19 +89,55 @@ class CoinTableViewCell: UITableViewCell {
         namePriceStackView.axis = NSLayoutConstraint.Axis.vertical
         namePriceStackView.distribution = UIStackView.Distribution.equalSpacing
         namePriceStackView.alignment = UIStackView.Alignment.leading
-        namePriceStackView.spacing = 6
+        namePriceStackView.spacing = 8
     }
     
-    private func setUpcoinPriceChangeStackViewStackView() {
+    private func setUpcoinPriceChangeStackView() {
         coinPriceChangeStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        coinPriceChangeStackView.addArrangedSubview(coin24hChangeLabel)
-        coinPriceChangeStackView.addArrangedSubview(coin7dChangeLabel)
+        coinPriceChangeStackView.addArrangedSubview(coin24hChangeStackView)
+        coinPriceChangeStackView.addArrangedSubview(coin7dChangeStackView)
         
         coinPriceChangeStackView.axis = NSLayoutConstraint.Axis.vertical
         coinPriceChangeStackView.distribution = UIStackView.Distribution.equalSpacing
-        coinPriceChangeStackView.alignment = UIStackView.Alignment.leading
-        coinPriceChangeStackView.spacing = 6
+        coinPriceChangeStackView.alignment = UIStackView.Alignment.trailing
+        coinPriceChangeStackView.spacing = 8
+    }
+    
+    private func setUpCoin7dChangeStackView() {
+        coin24hChangeStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label24h = UILabel()
+        label24h.text = "24H"
+        label24h.textAlignment = .right
+        label24h.translatesAutoresizingMaskIntoConstraints = false
+        label24h.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        coin24hChangeStackView.addArrangedSubview(coin24hChangeLabel)
+        coin24hChangeStackView.addArrangedSubview(label24h)
+        
+        coin24hChangeStackView.axis = NSLayoutConstraint.Axis.horizontal
+        coin24hChangeStackView.distribution = UIStackView.Distribution.equalSpacing
+        coin24hChangeStackView.alignment = UIStackView.Alignment.trailing
+        coin24hChangeStackView.spacing = 4
+    }
+    
+    private func setUpCoin24hChangeStackVieww() {
+        coin7dChangeStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label7d = UILabel()
+        label7d.text = "7d"
+        label7d.textAlignment = .right
+        label7d.translatesAutoresizingMaskIntoConstraints = false
+        label7d.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        coin7dChangeStackView.addArrangedSubview(coin7dChangeLabel)
+        coin7dChangeStackView.addArrangedSubview(label7d)
+        
+        coin7dChangeStackView.axis = NSLayoutConstraint.Axis.horizontal
+        coin7dChangeStackView.distribution = UIStackView.Distribution.equalSpacing
+        coin7dChangeStackView.alignment = UIStackView.Alignment.trailing
+        coin7dChangeStackView.spacing = 4
     }
     
     func addConstraints() {
@@ -135,12 +177,34 @@ class CoinTableViewCell: UITableViewCell {
         if let coin = coin {
             coinNameLabel.text = coin.name
             coinPriceLabel.text = "\(coin.price_usd) $"
-            coin24hChangeLabel.text = "\(coin.percent_change_24h)% 24h"
-            coin7dChangeLabel.text = "\(coin.percent_change_7d) 7d"
+            coin24hChangeLabel.text = "\(coin.percent_change_24h)%"
+            coin24hChangeLabel.textColor = getTextColor(with: isNumberPositive(strNum: coin.percent_change_24h))
+            coin7dChangeLabel.text = "\(coin.percent_change_7d)%"
+            coin7dChangeLabel.textColor = getTextColor(with: isNumberPositive(strNum: coin.percent_change_7d))
             if let coinImg =  UIImage(named: coin.symbol.lowercased()){
                 coinImage.image = coinImg
             }
         }
+    }
+    
+    private func isNumberPositive(strNum numberStr: String) -> Bool? {
+        if let number = Double(numberStr) {
+            if number > 0 {return true}
+            else {return false}
+        }
+        else {return nil}
         
+    }
+    
+    private func getTextColor(with isPositive: Bool?) -> UIColor {
+        if let isPositive = isPositive {
+            switch isPositive {
+            case true:
+                return UIColor.green
+            case false:
+                return UIColor.red
+            }
+        }
+        else { return UIColor.black }
     }
 }
