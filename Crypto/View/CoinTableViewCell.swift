@@ -60,6 +60,7 @@ class CoinTableViewCell: UITableViewCell {
     private func setUpCoinNameLabel() {
         coinNameLabel.translatesAutoresizingMaskIntoConstraints = false
         coinNameLabel.text = "Coin"
+        coinNameLabel.font = UIFont.boldSystemFont(ofSize: 19)
     }
     
     private func setUpCoinPriceLabel() {
@@ -108,6 +109,10 @@ class CoinTableViewCell: UITableViewCell {
         
         let label24h = UILabel()
         label24h.text = "24H"
+        label24h.textAlignment = .right
+        label24h.translatesAutoresizingMaskIntoConstraints = false
+        label24h.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        
         coin24hChangeStackView.addArrangedSubview(coin24hChangeLabel)
         coin24hChangeStackView.addArrangedSubview(label24h)
         
@@ -122,6 +127,10 @@ class CoinTableViewCell: UITableViewCell {
         
         let label7d = UILabel()
         label7d.text = "7d"
+        label7d.textAlignment = .right
+        label7d.translatesAutoresizingMaskIntoConstraints = false
+        label7d.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        
         coin7dChangeStackView.addArrangedSubview(coin7dChangeLabel)
         coin7dChangeStackView.addArrangedSubview(label7d)
         
@@ -168,12 +177,34 @@ class CoinTableViewCell: UITableViewCell {
         if let coin = coin {
             coinNameLabel.text = coin.name
             coinPriceLabel.text = "\(coin.price_usd) $"
-            coin24hChangeLabel.text = "\(coin.percent_change_24h)"
-            coin7dChangeLabel.text = "\(coin.percent_change_7d)"
+            coin24hChangeLabel.text = "\(coin.percent_change_24h)%"
+            coin24hChangeLabel.textColor = getTextColor(with: isNumberPositive(strNum: coin.percent_change_24h))
+            coin7dChangeLabel.text = "\(coin.percent_change_7d)%"
+            coin7dChangeLabel.textColor = getTextColor(with: isNumberPositive(strNum: coin.percent_change_7d))
             if let coinImg =  UIImage(named: coin.symbol.lowercased()){
                 coinImage.image = coinImg
             }
         }
+    }
+    
+    private func isNumberPositive(strNum numberStr: String) -> Bool? {
+        if let number = Double(numberStr) {
+            if number > 0 {return true}
+            else {return false}
+        }
+        else {return nil}
         
+    }
+    
+    private func getTextColor(with isPositive: Bool?) -> UIColor {
+        if let isPositive = isPositive {
+            switch isPositive {
+            case true:
+                return UIColor.green
+            case false:
+                return UIColor.red
+            }
+        }
+        else { return UIColor.black }
     }
 }
