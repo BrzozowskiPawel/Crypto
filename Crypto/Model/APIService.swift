@@ -19,7 +19,7 @@ class APIService {
     func fetchData() {
         print("WORKING ")
         
-        guard let url  = URL(string: "https://api.coinlore.net/api/tickers/") else {
+        guard let url  = URL(string: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=100&CMC_PRO_API_KEY=32461a18-c3a1-474d-8b3f-da1d6d8be698&convert=USD") else {
             print("CANNOT CRATE URL - it empty ")
             return
         }
