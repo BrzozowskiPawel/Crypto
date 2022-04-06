@@ -10,13 +10,17 @@ import UIKit
 class HomeView: UIView {
 
     private let rainbowView = UIView()
-    private let rainbowViewStackView = UIStackView()
+    private let todayStackView = UIStackView()
     private let todayIsLabel = UILabel()
     private let dateLabel = UILabel()
     private let monthYearLabel = UILabel()
 
     private var myTableView = UITableView()
     private var coinArray = [Coin]()
+    
+    private let sortStackView = UIStackView()
+    private let sortLabel = UILabel()
+    private let sortButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,7 +40,7 @@ class HomeView: UIView {
         addElementsToStackView()
         
         rainbowView.translatesAutoresizingMaskIntoConstraints = false
-        rainbowView.addSubview(rainbowViewStackView)
+        rainbowView.addSubview(todayStackView)
         rainbowView.layer.cornerRadius = 10
         addSubview(rainbowView)
         
@@ -45,6 +49,25 @@ class HomeView: UIView {
         myTableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
         myTableView.dataSource = self
         myTableView.delegate = self
+        
+        configureSorting()
+    }
+    
+    private func configureSorting() {
+        sortStackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(sortStackView)
+        
+        sortStackView.addArrangedSubview(sortLabel)
+        sortStackView.addArrangedSubview(sortButton)
+        
+        sortLabel.text = "No sorting"
+        sortButton.setTitle("title", for: .normal)
+        
+        sortStackView.axis = NSLayoutConstraint.Axis.horizontal
+        sortStackView.distribution = UIStackView.Distribution.equalSpacing
+        sortStackView.alignment = UIStackView.Alignment.center
+        sortStackView.spacing = 12
+        sortStackView.backgroundColor = .red
     }
     
     private func configureLabels() {
@@ -62,16 +85,16 @@ class HomeView: UIView {
     }
     
     private func addElementsToStackView() {
-        rainbowViewStackView.translatesAutoresizingMaskIntoConstraints = false
+        todayStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        rainbowViewStackView.addArrangedSubview(todayIsLabel)
-        rainbowViewStackView.addArrangedSubview(dateLabel)
-        rainbowViewStackView.addArrangedSubview(monthYearLabel)
+        todayStackView.addArrangedSubview(todayIsLabel)
+        todayStackView.addArrangedSubview(dateLabel)
+        todayStackView.addArrangedSubview(monthYearLabel)
         
-        rainbowViewStackView.axis = NSLayoutConstraint.Axis.vertical
-        rainbowViewStackView.distribution = UIStackView.Distribution.equalSpacing
-        rainbowViewStackView.alignment = UIStackView.Alignment.center
-        rainbowViewStackView.spacing = 12
+        todayStackView.axis = NSLayoutConstraint.Axis.vertical
+        todayStackView.distribution = UIStackView.Distribution.equalSpacing
+        todayStackView.alignment = UIStackView.Alignment.center
+        todayStackView.spacing = 12
     }
     
     func addConstraints() {
@@ -79,7 +102,19 @@ class HomeView: UIView {
         constraints += createRainbowViewConstraints()
         constraints += createRainbowViewStackViewConstraints()
         constraints += createMyTableViewwConstraints()
+        constraints += createSortViewStackViewConstraints()
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    private func createSortViewStackViewConstraints() -> [NSLayoutConstraint] {
+        let guide = safeAreaLayoutGuide
+        return [
+            sortStackView.bottomAnchor.constraint(equalTo: myTableView.topAnchor, constant: 0),
+            sortStackView.heightAnchor.constraint(equalToConstant: 30),
+            sortStackView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 5),
+            sortStackView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -5),
+            sortButton.widthAnchor.constraint(equalToConstant: 100)
+        ]
     }
     
     private func createRainbowViewConstraints() -> [NSLayoutConstraint] {
@@ -93,10 +128,10 @@ class HomeView: UIView {
     
     private func createRainbowViewStackViewConstraints() -> [NSLayoutConstraint] {
         return [
-            rainbowViewStackView.topAnchor.constraint(equalTo: rainbowView.topAnchor, constant: 10),
-            rainbowViewStackView.bottomAnchor.constraint(equalTo: rainbowView.bottomAnchor, constant: -10),
-            rainbowViewStackView.leadingAnchor.constraint(equalTo: rainbowView.leadingAnchor, constant: 10),
-            rainbowViewStackView.trailingAnchor.constraint(equalTo: rainbowView.trailingAnchor, constant: -10),
+            todayStackView.topAnchor.constraint(equalTo: rainbowView.topAnchor, constant: 10),
+            todayStackView.bottomAnchor.constraint(equalTo: rainbowView.bottomAnchor, constant: -10),
+            todayStackView.leadingAnchor.constraint(equalTo: rainbowView.leadingAnchor, constant: 10),
+            todayStackView.trailingAnchor.constraint(equalTo: rainbowView.trailingAnchor, constant: -10),
         ]
     }
     
