@@ -60,6 +60,7 @@ class CoinTableViewCell: UITableViewCell {
     private func setUpCoinNameLabel() {
         coinNameLabel.translatesAutoresizingMaskIntoConstraints = false
         coinNameLabel.text = "Coin"
+        coinNameLabel.numberOfLines = 0
         coinNameLabel.font = UIFont.boldSystemFont(ofSize: 19)
     }
     
@@ -82,6 +83,7 @@ class CoinTableViewCell: UITableViewCell {
     
     private func setUpNamePriceStackView() {
         namePriceStackView.translatesAutoresizingMaskIntoConstraints = false
+        coinNameLabel.translatesAutoresizingMaskIntoConstraints = false
         
         namePriceStackView.addArrangedSubview(coinNameLabel)
         namePriceStackView.addArrangedSubview(coinPriceLabel)
@@ -162,6 +164,7 @@ class CoinTableViewCell: UITableViewCell {
         return [
             namePriceStackView.leadingAnchor.constraint(equalTo: coinImage.trailingAnchor, constant: 20),
             namePriceStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            coinNameLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 130)
         ]
     }
     
@@ -175,24 +178,26 @@ class CoinTableViewCell: UITableViewCell {
     public func configureCell(withCell configureCoin: Coin) {
         self.coin = configureCoin
         if let coin = coin {
+            let price = coin.quote.USD.price.rounded(toPlaces: 2)
+            let price24h = coin.quote.USD.percent_change_24h.rounded(toPlaces: 2)
+            let price7d =  coin.quote.USD.percent_change_7d.rounded(toPlaces: 2)
+            
             coinNameLabel.text = coin.name
-            coinPriceLabel.text = "\(coin.price_usd) $"
-            coin24hChangeLabel.text = "\(coin.percent_change_24h)%"
-            coin24hChangeLabel.textColor = getTextColor(with: isNumberPositive(strNum: coin.percent_change_24h))
-            coin7dChangeLabel.text = "\(coin.percent_change_7d)%"
-            coin7dChangeLabel.textColor = getTextColor(with: isNumberPositive(strNum: coin.percent_change_7d))
-            if let coinImg =  UIImage(named: coin.symbol.lowercased()){
-                coinImage.image = coinImg
+            coinPriceLabel.text = "\(price) $"
+            coin24hChangeLabel.text = "\(price24h)%"
+            coin24hChangeLabel.textColor = getTextColor(with: isNumberPositive(num: price24h))
+            coin7dChangeLabel.text = "\(price7d)%"
+            coin7dChangeLabel.textColor = getTextColor(with: isNumberPositive(num: price7d))
+            
+            if let url = URL(string: "https://s2.coinmarketcap.com/static/img/coins/64x64/\(coin.id).png") {
+                coinImage.load(url: url)
             }
         }
     }
     
-    private func isNumberPositive(strNum numberStr: String) -> Bool? {
-        if let number = Double(numberStr) {
-            if number > 0 {return true}
-            else {return false}
-        }
-        else {return nil}
+    private func isNumberPositive(num number: Double) -> Bool? {
+        if number > 0 {return true}
+        else {return false}
         
     }
     
@@ -206,5 +211,28 @@ class CoinTableViewCell: UITableViewCell {
             }
         }
         else { return UIColor.black }
+    }
+}
+
+
+extension UIImageView {
+    func load(url: URL) {
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension Double {
+    /// Rounds the double to decimal places value
+    func rounded(toPlaces places:Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
     }
 }
