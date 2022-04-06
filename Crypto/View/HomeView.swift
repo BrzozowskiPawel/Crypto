@@ -7,27 +7,33 @@
 
 import UIKit
 
+enum sorting: String {
+    case priceUp = "＄📈"
+    case priceDown = "＄📉"
+    case change24Down = "％📉"
+    case change24Up = "％📈"
+    case change7Down = "％📉⒎"
+    case change7Up = "％📈⒎"
+}
+
 class HomeView: UIView {
-
-    private let rainbowView = UIView()
-    private let todayStackView = UIStackView()
-    private let todayIsLabel = UILabel()
-    private let dateLabel = UILabel()
-    private let monthYearLabel = UILabel()
-
+    private var sortingSC = UISegmentedControl(items: [sorting.priceDown.rawValue,
+                                                       sorting.priceUp.rawValue,
+                                                       sorting.change24Down.rawValue,
+                                                       sorting.change24Up.rawValue,
+                                                       sorting.change7Down.rawValue,
+                                                       sorting.change7Up.rawValue])
+    private var sortingTextfield = UITextField()
+    private var sortingStackView = UIStackView()
     private var myTableView = UITableView()
     private var coinArray = [Coin]()
-    
-    private let sortStackView = UIStackView()
-    private let sortLabel = UILabel()
-    private let sortButton = UIButton()
+    private var coinArrayCopy = [Coin]()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         configureElements()
         addConstraints()
-        
         backgroundColor = .white
     }
     
@@ -36,13 +42,6 @@ class HomeView: UIView {
     }
     
     private func configureElements() {
-        configureLabels()
-        addElementsToStackView()
-        
-        rainbowView.translatesAutoresizingMaskIntoConstraints = false
-        rainbowView.addSubview(todayStackView)
-        rainbowView.layer.cornerRadius = 10
-        addSubview(rainbowView)
         
         addSubview(myTableView)
         myTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -50,109 +49,102 @@ class HomeView: UIView {
         myTableView.dataSource = self
         myTableView.delegate = self
         
-        configureSorting()
+        addSubview(sortingStackView)
+        sortingStackView.translatesAutoresizingMaskIntoConstraints = false
+        configureSortingElements()
+
     }
     
-    private func configureSorting() {
-        sortStackView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(sortStackView)
+    private func configureSortingElements() {
+        sortingSC.selectedSegmentIndex = 0
+        sortingSC.layer.cornerRadius = 5.0
+        sortingSC.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: UIControl.Event.valueChanged)
         
-        sortStackView.addArrangedSubview(sortLabel)
-        sortStackView.addArrangedSubview(sortButton)
+        sortingTextfield.layer.cornerRadius = 5.0
+        sortingTextfield.translatesAutoresizingMaskIntoConstraints = false
+        sortingTextfield.layer.borderWidth = 1.25
+        sortingTextfield.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        let centeredParagraphStyle = NSMutableParagraphStyle()
+        centeredParagraphStyle.alignment = .center
+        sortingTextfield.attributedPlaceholder = NSAttributedString(
+            string: "Search by coin name 🔍",
+            attributes: [.paragraphStyle: centeredParagraphStyle]
+        )
         
-        sortLabel.text = "No sorting"
-        sortButton.setTitle("title", for: .normal)
+        sortingStackView.addArrangedSubview(sortingSC)
+        sortingStackView.addArrangedSubview(sortingTextfield)
         
-        sortStackView.axis = NSLayoutConstraint.Axis.horizontal
-        sortStackView.distribution = UIStackView.Distribution.equalSpacing
-        sortStackView.alignment = UIStackView.Alignment.center
-        sortStackView.spacing = 12
-        sortStackView.backgroundColor = .red
+        sortingStackView.axis = NSLayoutConstraint.Axis.vertical
+        sortingStackView.distribution = UIStackView.Distribution.equalSpacing
+        sortingStackView.alignment = UIStackView.Alignment.center
+        sortingStackView.spacing = 5
     }
     
-    private func configureLabels() {
-        todayIsLabel.translatesAutoresizingMaskIntoConstraints = false
-        todayIsLabel.textAlignment = .center
-        todayIsLabel.text = "Today is:"
-        
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateLabel.textAlignment = .center
-        dateLabel.text = "Friday 25"
-        
-        monthYearLabel.translatesAutoresizingMaskIntoConstraints = false
-        monthYearLabel.textAlignment = .center
-        monthYearLabel.text = "march 2022"
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text {
+            coinArray = coinArray.filter({ coin in
+                return coin.name.lowercased().contains(text.lowercased())
+            })
+            if text.count == 0 {
+                coinArray = coinArrayCopy
+            }
+            myTableView.reloadData()
+        }
     }
     
-    private func addElementsToStackView() {
-        todayStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        todayStackView.addArrangedSubview(todayIsLabel)
-        todayStackView.addArrangedSubview(dateLabel)
-        todayStackView.addArrangedSubview(monthYearLabel)
-        
-        todayStackView.axis = NSLayoutConstraint.Axis.vertical
-        todayStackView.distribution = UIStackView.Distribution.equalSpacing
-        todayStackView.alignment = UIStackView.Alignment.center
-        todayStackView.spacing = 12
+    @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            coinArray = coinArray.sorted(by: {$0.quote.USD.price > $1.quote.USD.price})
+            myTableView.reloadData()
+        case 1:
+            coinArray = coinArray.sorted(by: {$0.quote.USD.price < $1.quote.USD.price})
+            myTableView.reloadData()
+        case 2:
+            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_24h > $1.quote.USD.percent_change_24h})
+            myTableView.reloadData()
+        case 3:
+            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_24h < $1.quote.USD.percent_change_24h})
+            myTableView.reloadData()
+        case 4:
+            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_7d > $1.quote.USD.percent_change_7d})
+            myTableView.reloadData()
+        case 5:
+            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_7d < $1.quote.USD.percent_change_7d})
+            myTableView.reloadData()
+        default:
+            print("NONE")
+        }
     }
     
     func addConstraints() {
         var constraints = [NSLayoutConstraint]()
-        constraints += createRainbowViewConstraints()
-        constraints += createRainbowViewStackViewConstraints()
         constraints += createMyTableViewwConstraints()
-        constraints += createSortViewStackViewConstraints()
+        constraints += createSortingSCConstraints()
         NSLayoutConstraint.activate(constraints)
     }
     
-    private func createSortViewStackViewConstraints() -> [NSLayoutConstraint] {
+    private func createSortingSCConstraints() -> [NSLayoutConstraint] {
         let guide = safeAreaLayoutGuide
         return [
-            sortStackView.bottomAnchor.constraint(equalTo: myTableView.topAnchor, constant: 0),
-            sortStackView.heightAnchor.constraint(equalToConstant: 30),
-            sortStackView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 5),
-            sortStackView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -5),
-            sortButton.widthAnchor.constraint(equalToConstant: 100)
-        ]
-    }
-    
-    private func createRainbowViewConstraints() -> [NSLayoutConstraint] {
-        let guide = safeAreaLayoutGuide
-        return [
-            rainbowView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            rainbowView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 10),
-            rainbowView.widthAnchor.constraint(equalToConstant: 200),
-        ]
-    }
-    
-    private func createRainbowViewStackViewConstraints() -> [NSLayoutConstraint] {
-        return [
-            todayStackView.topAnchor.constraint(equalTo: rainbowView.topAnchor, constant: 10),
-            todayStackView.bottomAnchor.constraint(equalTo: rainbowView.bottomAnchor, constant: -10),
-            todayStackView.leadingAnchor.constraint(equalTo: rainbowView.leadingAnchor, constant: 10),
-            todayStackView.trailingAnchor.constraint(equalTo: rainbowView.trailingAnchor, constant: -10),
+            sortingStackView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 5),
+            sortingStackView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -5),
+            sortingStackView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 10),
+            sortingStackView.heightAnchor.constraint(equalToConstant: 60),
+            sortingTextfield.widthAnchor.constraint(equalTo: sortingStackView.widthAnchor, constant: -10),
+            sortingTextfield.heightAnchor.constraint(equalTo: sortingSC.heightAnchor)
         ]
     }
     
     private func createMyTableViewwConstraints() -> [NSLayoutConstraint] {
         let guide = safeAreaLayoutGuide
         return [
-            myTableView.topAnchor.constraint(equalTo: rainbowView.bottomAnchor, constant: 20),
+            myTableView.topAnchor.constraint(equalTo: sortingStackView.bottomAnchor, constant: 10),
             myTableView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 0),
             myTableView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: 0),
             myTableView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
             
         ]
-    }
-    
-    public func configureTodayLabel(dayOfWeek dayOfWeek: String, dayOfMonth dayOfMonth: Int?, month month:String, year year: String) {
-        guard let dayOfMonth = dayOfMonth else {
-            return
-        }
-
-        dateLabel.text = "\(dayOfWeek) \(dayOfMonth)"
-        monthYearLabel.text = "\(month) \(year)"
     }
 }
 
@@ -176,6 +168,7 @@ extension HomeView: UITableViewDelegate, UITableViewDataSource {
     
     public func configureTableView(coins: [Coin]) {
         self.coinArray = coins
+        self.coinArrayCopy = coins
         myTableView.reloadData()
         print("RELOADING SHOULD APEAR = \(coins.count)")
     }
