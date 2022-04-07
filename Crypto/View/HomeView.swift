@@ -8,21 +8,21 @@
 import UIKit
 
 enum sorting: String {
-    case priceUp = "＄📈"
-    case priceDown = "＄📉"
-    case change24Down = "％📉"
-    case change24Up = "％📈"
-    case change7Down = "％📉⒎"
-    case change7Up = "％📈⒎"
+    case priceUp = "＄⬆️"
+    case priceDown = "＄⬇️"
+    case change24Up = "％⬆️"
+    case change24Down = "％⬇️"
+    case change7Up = "％⒎⬆️"
+    case change7Down = "％⒎⬇️"
 }
 
 class HomeView: UIView {
-    private var sortingSC = UISegmentedControl(items: [sorting.priceDown.rawValue,
-                                                       sorting.priceUp.rawValue,
-                                                       sorting.change24Down.rawValue,
+    private var sortingSC = UISegmentedControl(items: [sorting.priceUp.rawValue,
+                                                       sorting.priceDown.rawValue,
                                                        sorting.change24Up.rawValue,
-                                                       sorting.change7Down.rawValue,
-                                                       sorting.change7Up.rawValue])
+                                                       sorting.change24Down.rawValue,
+                                                       sorting.change7Up.rawValue,
+                                                       sorting.change7Down.rawValue])
     private var sortingTextfield = UITextField()
     private var sortingStackView = UIStackView()
     private var myTableView = UITableView()
