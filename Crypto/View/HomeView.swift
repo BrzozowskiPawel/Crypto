@@ -27,7 +27,8 @@ class HomeView: UIView {
     private var sortingStackView = UIStackView()
     private var myTableView = UITableView()
     private var coinArray = [Coin]()
-    private var coinArrayCopy = [Coin]()
+    private var coinArraySearchList = [[Coin]]()
+    private var coinArrayIndex: Int = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -82,12 +83,24 @@ class HomeView: UIView {
     
     @objc private func textFieldDidChange(_ textField: UITextField) {
         if let text = textField.text {
-            coinArray = coinArray.filter({ coin in
-                return coin.name.lowercased().contains(text.lowercased())
-            })
-            if text.count == 0 {
-                coinArray = coinArrayCopy
+            
+            if coinArraySearchList.count == 0 {
+                coinArraySearchList.append(coinArray)
             }
+            
+            if coinArrayIndex > text.count {
+                coinArray = coinArraySearchList[text.count]
+                coinArraySearchList.remove(at: coinArrayIndex)
+                coinArrayIndex = text.count
+            } else {
+                coinArray = coinArray.filter({ coin in
+                    return coin.name.lowercased().contains(text.lowercased())
+                })
+                
+                coinArrayIndex += 1
+                coinArraySearchList.append(coinArray)
+            }
+            
             myTableView.reloadData()
         }
     }
@@ -168,7 +181,6 @@ extension HomeView: UITableViewDelegate, UITableViewDataSource {
     
     public func configureTableView(coins: [Coin]) {
         self.coinArray = coins
-        self.coinArrayCopy = coins
         myTableView.reloadData()
         print("RELOADING SHOULD APEAR = \(coins.count)")
     }
