@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: modele nie powinny być mutable. Zmień wszystkie var na let
 struct APIResponse: Decodable {
     var data: [Coin]
 }

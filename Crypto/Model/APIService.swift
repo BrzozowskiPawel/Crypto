@@ -11,6 +11,7 @@ protocol APIProtocol: AnyObject {
     func dataRetrieved(_ retrievedData: APIResponse)
 }
 
+//TODO: nie powinnno to się znajdować w katalogu model
 class APIService {
     // Deleagate-Protocol pattern to retrieve data
     weak var delegate: APIProtocol?

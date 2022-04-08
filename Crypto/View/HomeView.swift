@@ -26,6 +26,7 @@ class HomeView: UIView {
     private var sortingTextfield = UITextField()
     private var sortingStackView = UIStackView()
     private var myTableView = UITableView()
+    // TODO: View nie może trzymać modeli ( ew. jedynie ViewModele)
     private var coinArray = [Coin]()
     private var coinArraySearchList = [[Coin]]()
     private var coinArrayIndex: Int = 0
@@ -104,7 +105,7 @@ class HomeView: UIView {
             myTableView.reloadData()
         }
     }
-    
+    //TODO: logika w modelu
     @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -161,6 +162,7 @@ class HomeView: UIView {
     }
 }
 
+// TODO: view nie może wykonywać logiki, powinieneś stworzyć osobną klasę implementującą UITableViewDataSource i przypisać jej obiekt do table view. Za UITableViewDelegate powinien odpowiadać albo ViewController albo (najlepiej) interactor
 extension HomeView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Num: \(indexPath.row)")

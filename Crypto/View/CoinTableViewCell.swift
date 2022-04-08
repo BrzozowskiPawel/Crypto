@@ -19,6 +19,8 @@ class CoinTableViewCell: UITableViewCell {
     private let coin24hChangeStackView = UIStackView()
     private let coin7dChangeStackView = UIStackView()
     
+    // TODO: nazwy są czasem nie czytelne. Skróty powinny być używane jeśli tak samo używasz ich w normalnej rozmowie (URL, API, App itp). Dlatego np. zamiast 7d lepiej użyć "week" http://apple.github.io/swift-internals/api-design-guidelines/ <- poczytaj
+    
     private var coin: Coin?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -31,7 +33,7 @@ class CoinTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    // TODO: wrzuć wszystkie metody związane z widokiem do prywatnego extension poniżej. Będzie czytelniej + nie będziesz musiał dodawać "private" przed każdą metoodą.
     private func setUp() {
         contentView.addSubview(coinImage)
         contentView.addSubview(namePriceStackView)
@@ -214,7 +216,7 @@ class CoinTableViewCell: UITableViewCell {
     }
 }
 
-
+// TODO: to powinno znajdować się w osobnym pliku np. UIImageView+extention Przy większym projekcie nikt nie będzie wiedział gdzie szukać extensionów do popularnych klas
 extension UIImageView {
     func load(url: URL) {
         DispatchQueue.global().async { [weak self] in
