@@ -33,6 +33,32 @@ class HomeViewController: UIViewController, UITableViewDelegate {
 }
 
 extension HomeViewController: SortingSegmentedControllDelegate {
+    func didTypeCoinName(text: String) {
+        var coinArray = coinDS.getCoinArray()
+        var coinArraySearchList = coinDS.getCoinArraySearchList()
+        var coinArrayIndex = coinDS.getCoinArrayIndex()
+        
+        if coinArraySearchList.count == 0 {
+            coinArraySearchList.append(coinArray)
+        }
+        if coinArrayIndex > text.count {
+            coinArray = coinArraySearchList[text.count]
+            coinArraySearchList.remove(at: coinArrayIndex)
+            coinArrayIndex = text.count
+        } else {
+            coinArray = coinArray.filter({ coin in
+                return coin.name.lowercased().contains(text.lowercased())
+            })
+            coinArrayIndex += 1
+            coinArraySearchList.append(coinArray)
+        }
+        
+        coinDS.updateCoinArray(array: coinArraySearchList[coinArrayIndex])
+        coinDS.updateCoinArraySearchList(coinArrList: coinArraySearchList)
+        coinDS.updateCoinArrayIndex(indexVal: coinArrayIndex)
+        homeView.myTableView.reloadData()
+    }
+    
     func didSelectSegement(segmentIndex: Int) {
         var coinArray = coinDS.getCoinArray()
         switch segmentIndex {
@@ -55,9 +81,6 @@ extension HomeViewController: SortingSegmentedControllDelegate {
         coinDS.updateCoinArray(array: coinArray)
         homeView.myTableView.reloadData()
     }
-    
-    func
-    
 }
 
 extension HomeViewController: APIProtocol {
@@ -69,11 +92,28 @@ extension HomeViewController: APIProtocol {
 }
 
 class CoinDataSource: NSObject, UITableViewDataSource {
-    
     private var coinArray = [Coin]()
+    private var coinArrayIndex: Int = 0
+    private var coinArraySearchList = [[Coin]]()
+    
+    func getCoinArrayIndex() -> Int {
+        return self.coinArrayIndex
+    }
+    
+    func getCoinArraySearchList() -> [[Coin]] {
+        return self.coinArraySearchList
+    }
     
     func getCoinArray() -> [Coin] {
         return self.coinArray
+    }
+    
+    func updateCoinArrayIndex(indexVal: Int) {
+        self.coinArrayIndex = indexVal
+    }
+    
+    func updateCoinArraySearchList(coinArrList: [[Coin]]) {
+        self.coinArraySearchList = coinArrList
     }
     
     func updateCoinArray(array: [Coin]) {
