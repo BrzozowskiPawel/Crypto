@@ -15,7 +15,6 @@ class HomeViewController: UIViewController, UITableViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         APIservice.delegate = self
         APIservice.fetchData()
@@ -56,6 +55,7 @@ extension HomeViewController: SortingSegmentedControllDelegate {
         coinDS.updateCoinArray(array: coinArraySearchList[coinArrayIndex])
         coinDS.updateCoinArraySearchList(coinArrList: coinArraySearchList)
         coinDS.updateCoinArrayIndex(indexVal: coinArrayIndex)
+        
         homeView.myTableView.reloadData()
     }
     
@@ -84,9 +84,8 @@ extension HomeViewController: SortingSegmentedControllDelegate {
 }
 
 extension HomeViewController: APIProtocol {
-    func dataRetrieved(_ retrievedData: APIResponse) {
-//        homeView.configureTableView(coins: retrievedData.data)
-        coinDS.updateCoinArray(array: retrievedData.data)
+    func dataRetrieved(_ retrievedData: [Coin]) {
+        coinDS.updateCoinArray(array: retrievedData)
         homeView.myTableView.reloadData()
     }
 }
