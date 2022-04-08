@@ -36,10 +36,11 @@ class APIService {
                 let decoder = JSONDecoder()
                 do {
                     // Parse the JSON
-                    let decodedData = try decoder.decode(APIResponse.self, from: data!)
+                    var decodedData = try decoder.decode(APIResponse.self, from: data!)
                     // Everything connected with UI should be in main thread
                     DispatchQueue.main.async {
                         // Parse the returned JSON back to the view controller with the protocol and deleagte pattern
+                        decodedData.data = decodedData.data.sorted(by: {$0.quote.USD.price > $1.quote.USD.price})
                         self?.delegate?.dataRetrieved(decodedData)
                     }
                 } catch {

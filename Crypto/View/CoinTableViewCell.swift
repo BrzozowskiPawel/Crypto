@@ -52,7 +52,6 @@ class CoinTableViewCell: UITableViewCell {
     private func setUpCoinImage() {
         
         coinImage.translatesAutoresizingMaskIntoConstraints = false
-        coinImage.image = UIImage(named: "2give")
         coinImage.contentMode = .scaleAspectFit
         coinImage.clipsToBounds = true
     }
