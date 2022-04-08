@@ -125,9 +125,7 @@ class CoinDataSource: NSObject, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CoinTableViewCell.identifier, for: indexPath as IndexPath) as! CoinTableViewCell
-        
         cell.configureCell(withCell: coinArray[indexPath.row])
-        
         return cell
     }
     
