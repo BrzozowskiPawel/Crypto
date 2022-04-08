@@ -64,9 +64,10 @@
 			children = (
 				E55D4C8F27EFD303005A4DE9 /* AppDelegate.swift */,
 				E55D4C9127EFD303005A4DE9 /* SceneDelegate.swift */,
+				E5EEEF682800603A00BE03F6 /* Services */,
 				E55D4CA727EFD64B005A4DE9 /* Model */,
-				E55D4CA627EFD51B005A4DE9 /* ViewModel */,
 				E55D4CA327EFD4BF005A4DE9 /* View */,
+				E55D4CA627EFD51B005A4DE9 /* Controller */,
 				E55D4C9827EFD304005A4DE9 /* Assets.xcassets */,
 				E55D4C9A27EFD304005A4DE9 /* LaunchScreen.storyboard */,
 				E55D4C9D27EFD304005A4DE9 /* Info.plist */,
@@ -83,21 +84,28 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		E55D4CA627EFD51B005A4DE9 /* ViewModel */ = {
+		E55D4CA627EFD51B005A4DE9 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
 				E55D4C9327EFD303005A4DE9 /* HomeViewController.swift */,
 			);
-			path = ViewModel;
+			path = Controller;
 			sourceTree = "<group>";
 		};
 		E55D4CA727EFD64B005A4DE9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				E55D4CA827EFD65E005A4DE9 /* APIService.swift */,
 				E55D4CAA27EFD6A0005A4DE9 /* Coin.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		E5EEEF682800603A00BE03F6 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				E55D4CA827EFD65E005A4DE9 /* APIService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
