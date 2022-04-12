@@ -30,7 +30,7 @@ class HomeView: UIView {
                                                        sorting.change7Down.rawValue])
     private var sortingTextfield = UITextField()
     private var sortingStackView = UIStackView()
-    var myTableView = UITableView()
+    private(set) var myTableView = UITableView()
     private var coinArrayIndex: Int = 0
     
     weak var segmentedControllDelegate: SortingSegmentedControllDelegate?

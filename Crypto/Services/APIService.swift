@@ -8,7 +8,7 @@
 import Foundation
 
 protocol APIProtocol: AnyObject {
-    func dataRetrieved(_ retrievedData: [Coin])
+    func coinArrayDidRetrieve(_ retrievedCoinArray: [Coin])
 }
 
 class APIService {
@@ -23,11 +23,11 @@ class APIService {
             if errorURL == nil && data != nil {
                 let decoder = JSONDecoder()
                 do {
-                    var decodedData = try decoder.decode(APIResponse.self, from: data!)
+                    let decodedData = try decoder.decode(APIResponse.self, from: data!)
                     DispatchQueue.main.async {
                         // Parse the returned JSON back to the view controller with the protocol and deleagte pattern
                         let dataFromAPI = decodedData.data.sorted(by: {$0.quote.USD.price > $1.quote.USD.price})
-                        self?.delegate?.dataRetrieved(dataFromAPI)
+                        self?.delegate?.coinArrayDidRetrieve(dataFromAPI)
                     }
                 } catch {
                     print("Sorry there was and error while decoding JSON: \(error)")
