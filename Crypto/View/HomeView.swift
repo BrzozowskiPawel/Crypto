@@ -25,9 +25,8 @@ class HomeView: UIView {
                                                        sorting.change7Down.rawValue])
     
     var sortingTextfield = UITextField()
-    private var sortingStackView = UIStackView()
-    
     var myTableView = UITableView()
+    private var sortingStackView = UIStackView()
     private var coinArrayIndex: Int = 0
     
     override init(frame: CGRect) {

@@ -24,14 +24,15 @@ class HomeViewController: UIViewController, UITableViewDelegate {
         
         homeView.myTableView.rx.setDelegate(self).disposed(by: bag)
         homeView.myTableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
-        coinDataSource.coinArrayPublishSubject.bind(to: homeView.myTableView.rx.items(cellIdentifier: CoinTableViewCell.identifier, cellType: CoinTableViewCell.self)){
-            row, coin , cell in
-            cell.configureCell(with: coin)
-        }.disposed(by: bag)
-        
+
+        bindTableViewWithData()
         bindSortingSegmentedControl()
         bindSortingTextField()
         
+    }
+    
+    private func bindTableViewWithData() {
+        coinDataSource.bindWithTable(homeView: homeView, bag: bag)
     }
     
     private func bindSortingTextField() {
@@ -41,9 +42,9 @@ class HomeViewController: UIViewController, UITableViewDelegate {
                 var coinArraySearchList = self.coinDataSource.getCoinArraySearchList()
                 var coinArrayIndex = self.coinDataSource.getCoinArrayIndex()
                 
-                if text.count > 0  {self.coinDataSource.startedEditingFlag = true}
+                if text.count > 0  {self.coinDataSource.startedEditing()}
                     
-                guard self.coinDataSource.startedEditingFlag == true else {return}
+                guard self.coinDataSource.getEditingFlag() == true else {return}
                 
                 if coinArraySearchList.count == 0 {
                     coinArraySearchList.append(coinArray)
