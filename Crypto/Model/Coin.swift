@@ -8,22 +8,22 @@
 import Foundation
 
 struct APIResponse: Decodable {
-    var data: [Coin]
+    let data: [Coin]
 }
 
 struct Coin: Decodable {
-    var id: Int
-    var symbol: String
-    var name: String
-    var quote: Quote
+    let id: Int
+    let symbol: String
+    let name: String
+    let quote: Quote
 }
 
 struct Quote: Decodable {
-    var USD: priceData
+    let USD: priceData
 }
 
 struct priceData: Decodable {
-    var price: Double
-    var percent_change_24h: Double
-    var percent_change_7d: Double
+    let price: Double
+    let percent_change_24h: Double
+    let percent_change_7d: Double
 }

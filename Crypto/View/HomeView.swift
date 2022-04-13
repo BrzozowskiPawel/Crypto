@@ -16,6 +16,11 @@ enum sorting: String {
     case change7Down = "％⒎⬇️"
 }
 
+protocol SortingSegmentedControllDelegate: NSObject {
+    func didSelectSegement(segmentIndex: Int)
+    func didTypeCoinName(text: String)
+}
+
 class HomeView: UIView {
     private var sortingSC = UISegmentedControl(items: [sorting.priceUp.rawValue,
                                                        sorting.priceDown.rawValue,
@@ -25,10 +30,10 @@ class HomeView: UIView {
                                                        sorting.change7Down.rawValue])
     private var sortingTextfield = UITextField()
     private var sortingStackView = UIStackView()
-    private var myTableView = UITableView()
-    private var coinArray = [Coin]()
-    private var coinArraySearchList = [[Coin]]()
+    private(set) var myTableView = UITableView()
     private var coinArrayIndex: Int = 0
+    
+    weak var segmentedControllDelegate: SortingSegmentedControllDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -47,8 +52,6 @@ class HomeView: UIView {
         addSubview(myTableView)
         myTableView.translatesAutoresizingMaskIntoConstraints = false
         myTableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
-        myTableView.dataSource = self
-        myTableView.delegate = self
         
         addSubview(sortingStackView)
         sortingStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,51 +86,12 @@ class HomeView: UIView {
     
     @objc private func textFieldDidChange(_ textField: UITextField) {
         if let text = textField.text {
-            
-            if coinArraySearchList.count == 0 {
-                coinArraySearchList.append(coinArray)
-            }
-            
-            if coinArrayIndex > text.count {
-                coinArray = coinArraySearchList[text.count]
-                coinArraySearchList.remove(at: coinArrayIndex)
-                coinArrayIndex = text.count
-            } else {
-                coinArray = coinArray.filter({ coin in
-                    return coin.name.lowercased().contains(text.lowercased())
-                })
-                
-                coinArrayIndex += 1
-                coinArraySearchList.append(coinArray)
-            }
-            
-            myTableView.reloadData()
+            self.segmentedControllDelegate?.didTypeCoinName(text: text)
         }
     }
     
     @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            coinArray = coinArray.sorted(by: {$0.quote.USD.price > $1.quote.USD.price})
-            myTableView.reloadData()
-        case 1:
-            coinArray = coinArray.sorted(by: {$0.quote.USD.price < $1.quote.USD.price})
-            myTableView.reloadData()
-        case 2:
-            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_24h > $1.quote.USD.percent_change_24h})
-            myTableView.reloadData()
-        case 3:
-            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_24h < $1.quote.USD.percent_change_24h})
-            myTableView.reloadData()
-        case 4:
-            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_7d > $1.quote.USD.percent_change_7d})
-            myTableView.reloadData()
-        case 5:
-            coinArray = coinArray.sorted(by: {$0.quote.USD.percent_change_7d < $1.quote.USD.percent_change_7d})
-            myTableView.reloadData()
-        default:
-            print("NONE")
-        }
+        self.segmentedControllDelegate?.didSelectSegement(segmentIndex: sender.selectedSegmentIndex)
     }
     
     func addConstraints() {
@@ -161,27 +125,3 @@ class HomeView: UIView {
     }
 }
 
-extension HomeView: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Num: \(indexPath.row)")
-        print("Value: \(coinArray[indexPath.row])")
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return coinArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CoinTableViewCell.identifier, for: indexPath as IndexPath) as! CoinTableViewCell
-        
-        cell.configureCell(withCell: coinArray[indexPath.row])
-        
-        return cell
-    }
-    
-    public func configureTableView(coins: [Coin]) {
-        self.coinArray = coins
-        myTableView.reloadData()
-        print("RELOADING SHOULD APEAR = \(coins.count)")
-    }
-}
