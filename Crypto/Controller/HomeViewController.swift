@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class HomeViewController: UIViewController, UITableViewDelegate {
 
     private let APIservice = APIService()
     private var homeView = HomeView()
     private var coinDataSource = CoinDataSource()
+    private let bag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,8 +23,13 @@ class HomeViewController: UIViewController, UITableViewDelegate {
         APIservice.fetchData()
         
         homeView.segmentedControllDelegate = self
-        homeView.myTableView.delegate = self
-        homeView.myTableView.dataSource = coinDataSource
+        homeView.myTableView.rx.setDelegate(self).disposed(by: bag)
+        homeView.myTableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
+        coinDataSource.coinArrayPublishSubject.bind(to: homeView.myTableView.rx.items(cellIdentifier: CoinTableViewCell.identifier, cellType: CoinTableViewCell.self)){
+            row, coin , cell in
+            cell.configureCell(with: coin)
+        }.disposed(by: bag)
+        
     }
     
     override func loadView() {
@@ -56,7 +64,6 @@ extension HomeViewController: SortingSegmentedControllDelegate {
         coinDataSource.updateCoinArraySearchList(coinArrList: coinArraySearchList)
         coinDataSource.updateCoinArrayIndex(indexVal: coinArrayIndex)
         
-        homeView.myTableView.reloadData()
     }
     
     func didSelectSegement(segmentIndex: Int) {
@@ -79,14 +86,12 @@ extension HomeViewController: SortingSegmentedControllDelegate {
         }
         
         coinDataSource.updateCoinArray(array: coinArray)
-        homeView.myTableView.reloadData()
     }
 }
 
 extension HomeViewController: APIProtocol {
     func coinArrayDidRetrieve(_ retrievedCoinArray: [Coin]) {
         coinDataSource.updateCoinArray(array: retrievedCoinArray)
-        homeView.myTableView.reloadData()
     }
 }
 

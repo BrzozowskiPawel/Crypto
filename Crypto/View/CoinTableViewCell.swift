@@ -174,7 +174,7 @@ class CoinTableViewCell: UITableViewCell {
         ]
     }
     
-    public func configureCell(withCell configureCoin: Coin) {
+    public func configureCell(with configureCoin: Coin) {
         self.coin = configureCoin
         if let coin = coin {
             let price = coin.quote.USD.price.rounded(toPlaces: 2)

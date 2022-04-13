@@ -30,7 +30,7 @@ class HomeView: UIView {
                                                        sorting.change7Down.rawValue])
     private var sortingTextfield = UITextField()
     private var sortingStackView = UIStackView()
-    private(set) var myTableView = UITableView()
+    var myTableView = UITableView()
     private var coinArrayIndex: Int = 0
     
     weak var segmentedControllDelegate: SortingSegmentedControllDelegate?
@@ -51,7 +51,6 @@ class HomeView: UIView {
         
         addSubview(myTableView)
         myTableView.translatesAutoresizingMaskIntoConstraints = false
-        myTableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
         
         addSubview(sortingStackView)
         sortingStackView.translatesAutoresizingMaskIntoConstraints = false
