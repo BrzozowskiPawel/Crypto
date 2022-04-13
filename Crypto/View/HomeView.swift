@@ -16,24 +16,19 @@ enum sorting: String {
     case change7Down = "％⒎⬇️"
 }
 
-protocol SortingSegmentedControllDelegate: NSObject {
-    func didSelectSegement(segmentIndex: Int)
-    func didTypeCoinName(text: String)
-}
-
 class HomeView: UIView {
-    private var sortingSC = UISegmentedControl(items: [sorting.priceUp.rawValue,
+    var sortingSC = UISegmentedControl(items: [sorting.priceUp.rawValue,
                                                        sorting.priceDown.rawValue,
                                                        sorting.change24Up.rawValue,
                                                        sorting.change24Down.rawValue,
                                                        sorting.change7Up.rawValue,
                                                        sorting.change7Down.rawValue])
-    private var sortingTextfield = UITextField()
+    
+    var sortingTextfield = UITextField()
     private var sortingStackView = UIStackView()
+    
     var myTableView = UITableView()
     private var coinArrayIndex: Int = 0
-    
-    weak var segmentedControllDelegate: SortingSegmentedControllDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -61,12 +56,11 @@ class HomeView: UIView {
     private func configureSortingElements() {
         sortingSC.selectedSegmentIndex = 0
         sortingSC.layer.cornerRadius = 5.0
-        sortingSC.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: UIControl.Event.valueChanged)
         
         sortingTextfield.layer.cornerRadius = 5.0
         sortingTextfield.translatesAutoresizingMaskIntoConstraints = false
         sortingTextfield.layer.borderWidth = 1.25
-        sortingTextfield.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        
         let centeredParagraphStyle = NSMutableParagraphStyle()
         centeredParagraphStyle.alignment = .center
         sortingTextfield.attributedPlaceholder = NSAttributedString(
@@ -81,16 +75,6 @@ class HomeView: UIView {
         sortingStackView.distribution = UIStackView.Distribution.equalSpacing
         sortingStackView.alignment = UIStackView.Alignment.center
         sortingStackView.spacing = 5
-    }
-    
-    @objc private func textFieldDidChange(_ textField: UITextField) {
-        if let text = textField.text {
-            self.segmentedControllDelegate?.didTypeCoinName(text: text)
-        }
-    }
-    
-    @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        self.segmentedControllDelegate?.didSelectSegement(segmentIndex: sender.selectedSegmentIndex)
     }
     
     func addConstraints() {

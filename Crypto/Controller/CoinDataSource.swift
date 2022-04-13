@@ -12,6 +12,8 @@ import RxCocoa
 
 class CoinDataSource: NSObject {
     let coinArrayPublishSubject = PublishSubject<[Coin]>()
+    var startedEditingFlag: Bool = false
+    
     var coinArray = [Coin]()
     private var coinArrayIndex: Int = 0
     private var coinArraySearchList = [[Coin]]()
