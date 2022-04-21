@@ -17,15 +17,15 @@ enum sorting: String {
 }
 
 class HomeView: UIView {
-    var sortingSC = UISegmentedControl(items: [sorting.priceUp.rawValue,
+    private var sortingSegmentedControl = UISegmentedControl(items: [sorting.priceUp.rawValue,
                                                        sorting.priceDown.rawValue,
                                                        sorting.change24Up.rawValue,
                                                        sorting.change24Down.rawValue,
                                                        sorting.change7Up.rawValue,
                                                        sorting.change7Down.rawValue])
     
-    var sortingTextfield = UITextField()
-    var myTableView = UITableView()
+    private var sortingTextfield = UITextField()
+    private var myTableView = UITableView()
     private var sortingStackView = UIStackView()
     private var coinArrayIndex: Int = 0
     
@@ -53,8 +53,8 @@ class HomeView: UIView {
     }
     
     private func configureSortingElements() {
-        sortingSC.selectedSegmentIndex = 0
-        sortingSC.layer.cornerRadius = 5.0
+        sortingSegmentedControl.selectedSegmentIndex = 0
+        sortingSegmentedControl.layer.cornerRadius = 5.0
         
         sortingTextfield.layer.cornerRadius = 5.0
         sortingTextfield.translatesAutoresizingMaskIntoConstraints = false
@@ -67,7 +67,7 @@ class HomeView: UIView {
             attributes: [.paragraphStyle: centeredParagraphStyle]
         )
         
-        sortingStackView.addArrangedSubview(sortingSC)
+        sortingStackView.addArrangedSubview(sortingSegmentedControl)
         sortingStackView.addArrangedSubview(sortingTextfield)
         
         sortingStackView.axis = NSLayoutConstraint.Axis.vertical
@@ -91,7 +91,7 @@ class HomeView: UIView {
             sortingStackView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 10),
             sortingStackView.heightAnchor.constraint(equalToConstant: 60),
             sortingTextfield.widthAnchor.constraint(equalTo: sortingStackView.widthAnchor, constant: -10),
-            sortingTextfield.heightAnchor.constraint(equalTo: sortingSC.heightAnchor)
+            sortingTextfield.heightAnchor.constraint(equalTo: sortingSegmentedControl.heightAnchor)
         ]
     }
     
@@ -104,6 +104,18 @@ class HomeView: UIView {
             myTableView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
             
         ]
+    }
+    
+    func getSortingSegmentedControl() -> UISegmentedControl {
+        return sortingSegmentedControl
+    }
+    
+    func getSortingTextfield() -> UITextField {
+        return sortingTextfield
+    }
+    
+    func getMyTableView() -> UITableView {
+        return myTableView
     }
 }
 

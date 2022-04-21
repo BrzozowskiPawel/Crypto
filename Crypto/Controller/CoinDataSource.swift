@@ -17,18 +17,19 @@ class CoinDataSource: NSObject {
     private let coinArrayPublishSubject = PublishSubject<[Coin]>()
     private var startedEditingFlag: Bool = false
     
-    func bindWithTable(homeView: HomeView, bag: DisposeBag) {
-        coinArrayPublishSubject.bind(to: homeView.myTableView.rx.items(cellIdentifier: CoinTableViewCell.identifier, cellType: CoinTableViewCell.self)){
+    func bindWithTable(homeView: HomeView, disposeBag: DisposeBag) {
+        let myTableView = homeView.getMyTableView()
+        coinArrayPublishSubject.bind(to: myTableView.rx.items(cellIdentifier: CoinTableViewCell.identifier, cellType: CoinTableViewCell.self)){
             row, coin , cell in
             cell.configureCell(with: coin)
-        }.disposed(by: bag)
+        }.disposed(by: disposeBag)
     }
     
     func getEditingFlag() -> Bool {
         return startedEditingFlag
     }
     
-    func startedEditing() {
+    func didStartEditing() {
         startedEditingFlag = true
     }
     func getCoinArrayIndex() -> Int {
