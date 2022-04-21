@@ -3,7 +3,7 @@
 
 ## DEMO
 This project is a cryptocurrency app that uses API to show information. </br>
-<img src="readme_files/DEMO.gif" alt="demo_gif" width="382"/> </br>
+<img src="demo.gif" alt="demo_gif" width="422"/> </br>
 
 ## APP DESIGN
 This app contains only 1 screen. </br>
