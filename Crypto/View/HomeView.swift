@@ -16,24 +16,18 @@ enum sorting: String {
     case change7Down = "％⒎⬇️"
 }
 
-protocol SortingSegmentedControllDelegate: NSObject {
-    func didSelectSegement(segmentIndex: Int)
-    func didTypeCoinName(text: String)
-}
-
 class HomeView: UIView {
-    private var sortingSC = UISegmentedControl(items: [sorting.priceUp.rawValue,
+    private var sortingSegmentedControl = UISegmentedControl(items: [sorting.priceUp.rawValue,
                                                        sorting.priceDown.rawValue,
                                                        sorting.change24Up.rawValue,
                                                        sorting.change24Down.rawValue,
                                                        sorting.change7Up.rawValue,
                                                        sorting.change7Down.rawValue])
-    private var sortingTextfield = UITextField()
-    private var sortingStackView = UIStackView()
-    private(set) var myTableView = UITableView()
-    private var coinArrayIndex: Int = 0
     
-    weak var segmentedControllDelegate: SortingSegmentedControllDelegate?
+    private var sortingTextfield = UITextField()
+    private var myTableView = UITableView()
+    private var sortingStackView = UIStackView()
+    private var coinArrayIndex: Int = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,7 +45,6 @@ class HomeView: UIView {
         
         addSubview(myTableView)
         myTableView.translatesAutoresizingMaskIntoConstraints = false
-        myTableView.register(CoinTableViewCell.self, forCellReuseIdentifier: CoinTableViewCell.identifier)
         
         addSubview(sortingStackView)
         sortingStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,14 +53,13 @@ class HomeView: UIView {
     }
     
     private func configureSortingElements() {
-        sortingSC.selectedSegmentIndex = 0
-        sortingSC.layer.cornerRadius = 5.0
-        sortingSC.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: UIControl.Event.valueChanged)
+        sortingSegmentedControl.selectedSegmentIndex = 0
+        sortingSegmentedControl.layer.cornerRadius = 5.0
         
         sortingTextfield.layer.cornerRadius = 5.0
         sortingTextfield.translatesAutoresizingMaskIntoConstraints = false
         sortingTextfield.layer.borderWidth = 1.25
-        sortingTextfield.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        
         let centeredParagraphStyle = NSMutableParagraphStyle()
         centeredParagraphStyle.alignment = .center
         sortingTextfield.attributedPlaceholder = NSAttributedString(
@@ -75,23 +67,13 @@ class HomeView: UIView {
             attributes: [.paragraphStyle: centeredParagraphStyle]
         )
         
-        sortingStackView.addArrangedSubview(sortingSC)
+        sortingStackView.addArrangedSubview(sortingSegmentedControl)
         sortingStackView.addArrangedSubview(sortingTextfield)
         
         sortingStackView.axis = NSLayoutConstraint.Axis.vertical
         sortingStackView.distribution = UIStackView.Distribution.equalSpacing
         sortingStackView.alignment = UIStackView.Alignment.center
         sortingStackView.spacing = 5
-    }
-    
-    @objc private func textFieldDidChange(_ textField: UITextField) {
-        if let text = textField.text {
-            self.segmentedControllDelegate?.didTypeCoinName(text: text)
-        }
-    }
-    
-    @objc private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        self.segmentedControllDelegate?.didSelectSegement(segmentIndex: sender.selectedSegmentIndex)
     }
     
     func addConstraints() {
@@ -109,7 +91,7 @@ class HomeView: UIView {
             sortingStackView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 10),
             sortingStackView.heightAnchor.constraint(equalToConstant: 60),
             sortingTextfield.widthAnchor.constraint(equalTo: sortingStackView.widthAnchor, constant: -10),
-            sortingTextfield.heightAnchor.constraint(equalTo: sortingSC.heightAnchor)
+            sortingTextfield.heightAnchor.constraint(equalTo: sortingSegmentedControl.heightAnchor)
         ]
     }
     
@@ -122,6 +104,18 @@ class HomeView: UIView {
             myTableView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: 0),
             
         ]
+    }
+    
+    func getSortingSegmentedControl() -> UISegmentedControl {
+        return sortingSegmentedControl
+    }
+    
+    func getSortingTextfield() -> UITextField {
+        return sortingTextfield
+    }
+    
+    func getMyTableView() -> UITableView {
+        return myTableView
     }
 }
 

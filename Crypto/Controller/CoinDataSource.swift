@@ -7,12 +7,31 @@
 
 import Foundation
 import UIKit
+import RxSwift
+import RxCocoa
 
-class CoinDataSource: NSObject, UITableViewDataSource {
-    private var coinArray = [Coin]()
+class CoinDataSource: NSObject {
+    var coinArray = [Coin]()
     private var coinArrayIndex: Int = 0
     private var coinArraySearchList = [[Coin]]()
+    private let coinArrayPublishSubject = PublishSubject<[Coin]>()
+    private var startedEditingFlag: Bool = false
     
+    func bindWithTable(homeView: HomeView, disposeBag: DisposeBag) {
+        let myTableView = homeView.getMyTableView()
+        coinArrayPublishSubject.bind(to: myTableView.rx.items(cellIdentifier: CoinTableViewCell.identifier, cellType: CoinTableViewCell.self)){
+            row, coin , cell in
+            cell.configureCell(with: coin)
+        }.disposed(by: disposeBag)
+    }
+    
+    func getEditingFlag() -> Bool {
+        return startedEditingFlag
+    }
+    
+    func didStartEditing() {
+        startedEditingFlag = true
+    }
     func getCoinArrayIndex() -> Int {
         return self.coinArrayIndex
     }
@@ -32,18 +51,9 @@ class CoinDataSource: NSObject, UITableViewDataSource {
     func updateCoinArraySearchList(coinArrList: [[Coin]]) {
         self.coinArraySearchList = coinArrList
     }
-    
+
     func updateCoinArray(array: [Coin]) {
         self.coinArray = array
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return coinArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CoinTableViewCell.identifier, for: indexPath as IndexPath) as! CoinTableViewCell
-        cell.configureCell(withCell: coinArray[indexPath.row])
-        return cell
+        self.coinArrayPublishSubject.onNext(array)
     }
 }
